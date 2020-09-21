@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe, Put, Delete } from '@nestjs/common';
-import { CreateUserDto } from './dto/user.dto';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Put, Delete, UsePipes, ValidationPipe } from '@nestjs/common';
+import { DeleteResult } from 'typeorm';
+import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { User } from './entity/user.entity';
 import { UsersService } from './users.service';
 
@@ -13,22 +14,24 @@ export class UsersController {
     }
     
     @Get(':id')
-    getUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
+    getUser(@Param('id', ParseIntPipe) id: number): Promise<User | null> {
         return this.usersService.getUser(id);
     }
     
+    @UsePipes(new ValidationPipe({ forbidNonWhitelisted: true, whitelist: true, skipMissingProperties: true }))
     @Post()
-    createUser(@Body() user: CreateUserDto): Promise<any> {
-        return this.usersService.createUser(user);
+    registerUser(@Body() user: CreateUserDto): Promise<User> {
+        return this.usersService.registerUser(user);
     }
     
+    @UsePipes(new ValidationPipe({ forbidNonWhitelisted: true, whitelist: true, skipMissingProperties: true }))
     @Put(':id')
-    updateUser(@Param('id', ParseIntPipe) id: number, @Body() user: CreateUserDto): Promise<any> {
+    updateUser(@Param('id', ParseIntPipe) id: number, @Body() user: UpdateUserDto): Promise<User | null> {
         return this.usersService.updateUser(id, user);
     }
     
     @Delete(':id')
-    deleteUser(@Param('id', ParseIntPipe) id: number): Promise<any> {
+    deleteUser(@Param('id', ParseIntPipe) id: number): Promise<DeleteResult> {
         return this.usersService.deleteUser(id);
     }
 }

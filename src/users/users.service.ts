@@ -1,29 +1,41 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, InsertResult, Repository, UpdateResult } from 'typeorm';
+import { Repository, DeleteResult } from 'typeorm';
+import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { User } from './entity/user.entity';
 
 @Injectable()
 export class UsersService {
-    constructor(@InjectRepository(User) private usersRepository: Repository<User>) { }
+    constructor(@InjectRepository(User) private readonly userRepository: Repository<User>) { }
 
-    async getUser(_id: number): Promise<User> {
-        return await this.usersRepository.findOne({ id: _id });
+    public async getUsers(): Promise<User[]> {
+        return await this.userRepository.find();
+    }
+
+    public async getUser(_id: number): Promise<User | null> {
+        return await this.userRepository.findOneOrFail(_id);
     }
     
-    async getUsers(): Promise<User[]> {
-        return await this.usersRepository.find({});
+    public async registerUser(userData: CreateUserDto): Promise<User> {
+        const { email } = userData;
+        let user = await this.userRepository.findOne({ where: { email } });
+        if (user) {
+            throw new HttpException("User already exists", HttpStatus.BAD_REQUEST);
+        }
+        user = this.userRepository.create(userData);
+        return await this.userRepository.save(user);
     }
 
-    async createUser(user: User): Promise<InsertResult> {
-        return await this.usersRepository.insert(user);
+    public async updateUser(_id: number, updatedUser: UpdateUserDto): Promise<User | null> {
+        let user = await this.userRepository.findOneOrFail(_id);
+        if (!user.id) {
+            console.error("User doesn't exist");
+        }
+        user = this.userRepository.create(updatedUser);
+        return await this.userRepository.save(user);
     }
 
-    async updateUser(_id: number, user: User): Promise<UpdateResult> {
-        return await this.usersRepository.update(_id, user);
-    }
-
-    async deleteUser(_id: number): Promise<DeleteResult> {
-        return await this.usersRepository.delete(_id);
+    public async deleteUser(_id: number): Promise<DeleteResult> {
+        return await this.userRepository.delete(_id);
     }
 }
