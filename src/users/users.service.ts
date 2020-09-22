@@ -30,16 +30,18 @@ export class UsersService {
     }
 
     public async updateUser(_id: string, updatedUser: UpdateUserDto): Promise<User | null> {
+        let user = await this.userRepository.findOne(_id);
+        if (!user) {
+            throw new HttpException("User doesn't exist", HttpStatus.BAD_REQUEST);
+        }
+
         const { email } = updatedUser;
-        let user = await this.userRepository.findOne({ where: { email: email, id: Not(_id) } });
+        user = await this.userRepository.findOne({ where: { email: email, id: Not(_id) } });
         if (user) {
             throw new HttpException("Email ID already exists", HttpStatus.BAD_REQUEST);
         }
 
         user = await this.userRepository.findOne(_id);
-        if (!user) {
-            throw new HttpException("User doesn't exist", HttpStatus.BAD_REQUEST);
-        }
         if (await bcrypt.compare(updatedUser.password, user.password) || updatedUser.password === user.password) {
             updatedUser.password = user.password;
         }
