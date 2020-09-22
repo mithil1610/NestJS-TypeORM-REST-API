@@ -1,11 +1,11 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import * as bcrypt from "bcrypt";
 import { UserRO } from "../ro/user.ro";
 
 @Entity()
 export class User {
-    @PrimaryGeneratedColumn('increment')
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
     
     @Column({length: 45, nullable: false})
     name: string;
@@ -23,12 +23,7 @@ export class User {
     address: string;
 
     @BeforeInsert()
-    async hashPassword(): Promise<any> {
-        this.password = await bcrypt.hash(this.password, 10);
-    }
-    
-    @BeforeUpdate()
-    async hashPassword1(): Promise<any> {
+    async hashPassword(): Promise<void> {
         this.password = await bcrypt.hash(this.password, 10);
     }
 

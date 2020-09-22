@@ -25,10 +25,8 @@ export class CreateUserDto {
 }
 
 export class UpdateUserDto {
-    @IsNumber()
-    @IsNotEmpty()
-    @IsDefined()
-    id: number;
+    @IsString()
+    id: string;
 
     @IsString()
     @IsNotEmpty()
