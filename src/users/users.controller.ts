@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, UsePipes, ValidationPipe, Header } from '@nestjs/common';
 import { DeleteResult } from 'typeorm';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { User } from './entity/user.entity';
@@ -27,6 +27,7 @@ export class UsersController {
     
     @UsePipes(new ValidationPipe({ forbidNonWhitelisted: true, whitelist: true, skipMissingProperties: true }))
     @Put(':id')
+    //@Header('Content-Type', 'multipart/form-data')
     updateUser(@Param('id') id: string, @Body() user: UpdateUserDto): Promise<User | null> {
         return this.usersService.updateUser(id, user);
     }
