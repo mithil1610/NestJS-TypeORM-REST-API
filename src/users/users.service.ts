@@ -4,7 +4,6 @@ import { Repository, DeleteResult, Not } from 'typeorm';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { User } from './entity/user.entity';
 import { UserRO } from './ro/user.ro';
-import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -15,7 +14,7 @@ export class UsersService {
     }
 
     public async getUser(_id: string): Promise<UserRO | null> {
-        return await (await this.userRepository.findOneOrFail(_id)).toResponseObject();
+        return (await this.userRepository.findOneOrFail(_id)).toResponseObject();
     }
     
     public async registerUser(userData: CreateUserDto): Promise<UserRO> {
@@ -29,7 +28,7 @@ export class UsersService {
         return user.toResponseObject();
     }
 
-    public async updateUser(_id: string, updatedUser: UpdateUserDto): Promise<User | null> {
+    public async updateUser(_id: string, updatedUser: UpdateUserDto, profile_photo_path: string): Promise<User | null> {
         let user = await this.userRepository.findOne(_id);
         if (!user) {
             throw new HttpException("User doesn't exist", HttpStatus.BAD_REQUEST);
@@ -41,15 +40,8 @@ export class UsersService {
             throw new HttpException("Email ID already exists", HttpStatus.BAD_REQUEST);
         }
 
-        user = await this.userRepository.findOne(_id);
-        if (await bcrypt.compare(updatedUser.password, user.password) || updatedUser.password === user.password) {
-            updatedUser.password = user.password;
-        }
-        else {
-            updatedUser.password = await bcrypt.hash(updatedUser.password, 10);
-        }
-
         updatedUser.id = _id;
+        updatedUser.profile_photo = profile_photo_path;
         user = this.userRepository.create(updatedUser);
         return await this.userRepository.save(user);
     }

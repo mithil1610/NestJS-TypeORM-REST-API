@@ -22,6 +22,9 @@ export class User {
     @Column({length: 500, nullable: true})
     address: string;
 
+    @Column({length: 180, nullable: true})
+    profile_photo: string;
+
     @BeforeInsert()
     async hashPassword(): Promise<void> {
         this.password = await bcrypt.hash(this.password, 10);

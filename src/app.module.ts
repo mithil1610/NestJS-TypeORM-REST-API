@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { WinstonModule } from 'nest-winston';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { HttpErrorFilter } from './shared/http-error.filter';
+import { AllExceptionsFilter } from './shared/http-error.filter';
 import { User } from './users/entity/user.entity';
 import { UsersModule } from './users/users.module';
 import * as winston from 'winston';
@@ -37,7 +37,7 @@ import { LoggingInterceptor } from './shared/logging.interceptor';
   providers: [AppService, 
     {
       provide: APP_FILTER,
-      useClass: HttpErrorFilter,
+      useClass: AllExceptionsFilter,
     },
     {
       provide: APP_INTERCEPTOR,
@@ -45,4 +45,5 @@ import { LoggingInterceptor } from './shared/logging.interceptor';
     },
   ],
 })
+
 export class AppModule { }

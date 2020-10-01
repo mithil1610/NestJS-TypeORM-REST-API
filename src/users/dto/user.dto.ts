@@ -35,15 +35,13 @@ export class UpdateUserDto {
     email: string;
     
     @IsString()
-    @IsNotEmpty()
-    @IsDefined()
-    password: string;
-    
-    @IsString()
     @Length(10, 10)
     @IsMobilePhone()
     phoneno: string;
 
     @IsString()
     address: string;
+
+    @IsString()
+    profile_photo: string;
 }
