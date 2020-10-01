@@ -1,10 +1,10 @@
-import { Column, Entity } from "typeorm";
+import { Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity()
 export class Docs {
-    @Column()
-    id: string;
+    @PrimaryColumn()
+    user_id: string;
     
-    @Column({length: 500, nullable: false})
-    docPath: string;
+    @Column({length: 5000, nullable: false})
+    docsResponse: string;
 }

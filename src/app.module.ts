@@ -9,6 +9,7 @@ import { User } from './users/entity/user.entity';
 import { UsersModule } from './users/users.module';
 import * as winston from 'winston';
 import { LoggingInterceptor } from './shared/logging.interceptor';
+import { Docs } from './users/entity/docs.entity';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { LoggingInterceptor } from './shared/logging.interceptor';
       username: 'root',
       password: 'mithil',
       database: 'test',
-      entities: [User],
+      entities: [User, Docs],
       synchronize: true,
     }), 
     WinstonModule.forRoot({

@@ -64,12 +64,13 @@ export class UsersController {
     async uploadMultipleFiles(@UploadedFiles() files, @Param('id') id: string) {
         const response = [];
         files.forEach(file => {
-            const fileReponse = {
+            const fileResponse = {
                 filename: file.filename,
                 path: file.path,
             };
-            response.push(fileReponse);
+            response.push(fileResponse);
         });
-        return response;
+        const response1 = JSON.stringify(response);
+        return this.usersService.uploadDocs(id, response1);
     }
 }
