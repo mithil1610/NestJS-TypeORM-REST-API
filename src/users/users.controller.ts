@@ -7,6 +7,7 @@ import { UsersService } from './users.service';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { editFileName, imageFileFilter } from './utils/file-upload.utils';
+import { Docs } from './entity/docs.entity';
 
 @Controller('users')
 export class UsersController {
@@ -61,7 +62,7 @@ export class UsersController {
             fileFilter: imageFileFilter,
         }),
     )
-    async uploadMultipleFiles(@UploadedFiles() files, @Param('id') id: string) {
+    async uploadMultipleFiles(@UploadedFiles() files: any[], @Param('id') id: string): Promise<Docs | null> {
         const response = [];
         files.forEach(file => {
             const fileResponse = {

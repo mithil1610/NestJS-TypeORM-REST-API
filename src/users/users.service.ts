@@ -61,7 +61,7 @@ export class UsersService {
         return await this.userRepository.delete(_id);
     }
     
-    public async uploadDocs(_id: string, docsResponse) {
+    public async uploadDocs(_id: string, docsResponse: string): Promise<Docs | null> {
         const user = await this.userRepository.findOne(_id);
         if (!user) {
             throw new HttpException("User doesn't exist", HttpStatus.BAD_REQUEST);
